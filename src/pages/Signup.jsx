@@ -2,18 +2,19 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { signup } from '../services/authService';
 import useAuthStore from '../store/useAuthStore';
-import  styles from "../styles.js";
+import styles from "../styles.js";
 
 const Signup = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isResident, setIsResident] = useState(false);
   const { login: setToken } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const response = await signup(username, password);
+      const response = await signup(username, password, isResident ? 'resident' : 'user');
       if (response && response.token) {
         setToken(response.token);
         navigate('/dashboard');
@@ -33,7 +34,7 @@ const Signup = () => {
     >
       <form
         onSubmit={handleSignup}
-        className="flex flex-col   md:w-[350px] w-[350px] mt-12 gap-8 rounded-2xl bg-black-100 p-12 items-center"
+        className="flex flex-col md:w-[350px] w-[350px] mt-12 gap-8 rounded-2xl bg-black-100 p-12 items-center"
       >
         <h1 className={styles.sectionSubText}>Sign Up</h1>
         <label className="flex flex-col">
@@ -58,6 +59,16 @@ const Signup = () => {
             required
             className="bg-tertiary py-4 px-6 placeholder:text-secondary text-white rounded-lg outline-none font-medium"
           />
+        </label>
+
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={isResident}
+            onChange={(e) => setIsResident(e.target.checked)}
+            className="mr-2"
+          />
+          <span className="text-white font-medium">I am a resident</span>
         </label>
 
         <button

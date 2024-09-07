@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import gsap from "gsap";
+import AddCustomerSupport from './AddCustomerSupport';
 
 const Dashboard = () => {
   const [isGradient, setIsGradient] = useState(false);
@@ -12,7 +13,7 @@ const Dashboard = () => {
       scale: 1,
     }, {
       x: -150,
-      y:-200,
+      y:-100,
       rotation: 720,
       scale: 2,
       duration: 2,
@@ -30,6 +31,7 @@ const Dashboard = () => {
       >
         Dashboard
       </h1>
+      <AddCustomerSupport/>
     </div>
   );
 };

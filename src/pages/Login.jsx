@@ -2,22 +2,39 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../services/authService";
 import useAuthStore from "../store/useAuthStore";
-import  styles from "../styles.js";
+import styles from "../styles.js";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { login: setToken } = useAuthStore();
+  const { login: setToken, setRole } = useAuthStore();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { token } = await login(username, password);
+      const response = await login(username, password);
+      console.log("Login response:", response);
+      const { token, role } = response;
       setToken(token);
-      navigate("/dashboard");
+      setRole(role);
+
+      switch (role) {
+        case 'admin':
+          navigate("/dashboard");
+          break;
+        case 'customer-support':
+          navigate("/page1");
+          break;
+        case 'resident':
+          navigate("/profile");
+          break;
+        default:
+          navigate("/");
+      }
     } catch (error) {
-      console.error("Login failed", error);
+      console.error("Login failed:", error);
+      alert(`Login failed: ${error.error || 'Unknown error'}`);
     }
   };
 
@@ -27,12 +44,11 @@ const Login = () => {
         (styles.paddingX, styles.paddingY)
       } h-screen w-full flex flex-col items-center justify-center bg-gradient-to-b from-[#131227] to-[#130103] backdrop-blur-2xl`}
     >
-      
       <form
         onSubmit={handleSubmit}
-        className=" flex flex-col md:w-[350px] w-[350px] mt-12 gap-8 rounded-2xl bg-black-100 p-12 items-center"
+        className="flex flex-col md:w-[350px] w-[350px] mt-12 gap-8 rounded-2xl bg-black-100 p-12 items-center"
       >
-        <h1 className={`${(styles.sectionSubText)}`}>Login</h1>
+        <h1 className={`${styles.sectionSubText}`}>Login</h1>
         <label className="flex flex-col">
           <span className="text-white font-medium mb-4">Username</span>
           <input
@@ -69,5 +85,6 @@ const Login = () => {
     </div>
   );
 };
+
 
 export default Login;

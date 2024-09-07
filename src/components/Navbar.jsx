@@ -1,11 +1,11 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import logo1 from "../assets/logo1.png"; // Assuming you have the logo import
-import useAuthStore from "../store/useAuthStore.jsx";
+import useAuthStore from "../store/useAuthStore";
 import styles from "../styles.js";
 
 const Navbar = () => {
-  const { isAuthenticated, logout } = useAuthStore();
+  const { isAuthenticated, userRole, logout } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -33,20 +33,23 @@ const Navbar = () => {
         <ul className="list-none hidden sm:flex flex-row gap-10 items-center">
           {isAuthenticated ? (
             <>
-              <li className="text-[#cdcae4] hover:text-white text-[18px] font-medium cursor-pointer">
-                <Link to="/dashboard">Dashboard</Link>
-              </li>
-              <li className="text-[#cdcae4] hover:text-white text-[18px] font-medium cursor-pointer">
-                <Link to="/page1">Page 1</Link>
-              </li>
-              <li className="text-[#cdcae4] hover:text-white text-[18px] font-medium cursor-pointer">
-                <Link to="/page2">Page 2</Link>
-              </li>
-              <li className="text-[#cdcae4] hover:text-white text-[18px] font-medium cursor-pointer">
-                <Link to="/page3">Page 3</Link>
-              </li>
-              <li className="bg-tertiary py-3 px-8 outline-none w-fit text-white font-semibold
-                      shadow-md shadow-primary rounded-xl">
+              {/* Conditional rendering based on user role */}
+              {userRole === 'admin' && (
+                <>
+                </>
+              )}
+
+              {userRole === 'customer-support' && (
+                <>
+                </>
+              )}
+
+              {userRole === 'resident' && (
+                <>
+                </>
+              )}
+
+              <li className="bg-tertiary py-3 px-8 outline-none w-fit text-white font-semibold shadow-md shadow-primary rounded-xl">
                 <button onClick={handleLogout}>Logout</button>
               </li>
             </>

@@ -10,8 +10,14 @@ const UserSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  role: {
+    type: String,
+    enum: ['admin', 'customer-support', 'resident'], // Added role field
+    default: 'resident' // Default role if none is provided
   }
 });
+
 
 // Encrypt password before saving
 UserSchema.pre('save', async function (next) {
@@ -29,3 +35,4 @@ UserSchema.methods.comparePassword = async function (password) {
 };
 
 module.exports = mongoose.model('User', UserSchema);
+

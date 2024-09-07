@@ -10,21 +10,33 @@ import Page2 from './pages/Page2';
 import Page3 from './pages/Page3';
 import Profile from './pages/Profile';
 import Landingpage from './pages/Landingpage'; // Assuming you have a LandingPage component
+import AddCustomerSupport from './pages/AddCustomerSupport'; // New component
 import useAuthStore from './store/useAuthStore.jsx';
 
-const PrivateRoute = ({ children }) => {
-  const { isAuthenticated } = useAuthStore();
-  return isAuthenticated ? children : <Navigate to="/login" />;
+const PrivateRoute = ({ children, role }) => {
+  const { isAuthenticated, userRole } = useAuthStore();
+  
+  // Redirect based on role
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+
+  // Ensure user has the required role
+  if (role && userRole !== role) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, userRole } = useAuthStore();
 
   return (
     <Router>
-      <div className='flex flex-col min-h-screen'>
+      <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className='flex-grow'>
+        <main className="flex-grow">
           <Routes>
             {/* Landing page is the initial page */}
             <Route path="/" element={<Landingpage />} />
@@ -33,11 +45,21 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
-            {/* Private routes for authenticated users */}
+            {/* Admin route for adding customer support */}
+            <Route
+              path="/add-customer-support"
+              element={
+                <PrivateRoute role="admin">
+                  <AddCustomerSupport />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Private routes based on roles */}
             <Route
               path="/dashboard"
               element={
-                <PrivateRoute>
+                <PrivateRoute role="admin">
                   <Dashboard />
                 </PrivateRoute>
               }
@@ -45,7 +67,7 @@ const AppRoutes = () => {
             <Route
               path="/profile"
               element={
-                <PrivateRoute>
+                <PrivateRoute role="resident">
                   <Profile />
                 </PrivateRoute>
               }
@@ -53,7 +75,7 @@ const AppRoutes = () => {
             <Route
               path="/page1"
               element={
-                <PrivateRoute>
+                <PrivateRoute role="customer-support">
                   <Page1 />
                 </PrivateRoute>
               }
